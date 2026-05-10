@@ -1,0 +1,4 @@
+-- Optional local seed after `supabase db reset` (see config.toml [db.seed]).
+-- Example:
+-- insert into public.hackathons (name, status, theme_slug, vercel_project_slug, start_date, end_date)
+-- values ('Demo Hack', 'scheduled', 'demo', 'cursor-hackathon-london-2026-1', now(), now() + interval '2 days');
