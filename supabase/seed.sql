@@ -1,4 +1,10 @@
--- Optional local seed after `supabase db reset` (see config.toml [db.seed]).
--- Example:
--- insert into public.hackathons (name, status, theme_slug, vercel_project_slug, start_date, end_date)
--- values ('Demo Hack', 'scheduled', 'demo', 'cursor-hackathon-london-2026-1', now(), now() + interval '2 days');
+-- Loaded from supabase/config.toml [db.seed] on `supabase db reset` (local) or
+-- `supabase db push --linked --include-seed` (see `npm run supabase:apply`).
+--
+-- Intentionally empty: do not seed fake/demo hackathons into the master panel.
+-- Real rows come from Luma via:
+--
+--   npm run luma:ingest
+--
+-- Keep this file as a no-op so Supabase CLI seed workflows remain safe.
+select 'seed skipped: run npm run luma:ingest for real hackathon rows' as message;

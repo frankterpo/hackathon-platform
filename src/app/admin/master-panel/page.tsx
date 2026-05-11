@@ -1,12 +1,13 @@
 import Link from "next/link";
 
+import { CreateHackathonForm } from "@/components/CreateHackathonForm";
 import { HackathonBoard } from "@/components/HackathonBoard";
 import { loadHackathonsForBoard } from "@/lib/supabase/server";
 
 /** Always read Supabase on the request — never bake an empty board at build time. */
 export const dynamic = "force-dynamic";
 
-export default async function Home() {
+export default async function MasterPanelAdminPage() {
   const {
     hackathons,
     queryError,
@@ -18,13 +19,16 @@ export default async function Home() {
 
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col px-4 py-10 sm:px-6 lg:px-8">
-      <div className="mb-6 flex justify-end">
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <Link
-          href="/admin/master-panel"
-          className="rounded-lg border border-white/10 px-3 py-1.5 text-xs font-medium uppercase tracking-wider text-zinc-400 transition hover:border-white/20 hover:text-zinc-200"
+          href="/"
+          className="inline-flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-zinc-500 transition hover:text-zinc-300"
         >
-          Master panel
+          ← Home
         </Link>
+      </div>
+      <div className="mb-10">
+        <CreateHackathonForm />
       </div>
       <HackathonBoard
         hackathons={hackathons}
@@ -33,6 +37,10 @@ export default async function Home() {
         envDiagnostics={envDiagnostics}
         queryError={queryError}
         usedDevMock={usedDevMock}
+        enableKanbanDrag
+        eyebrow="Admin · master panel"
+        title="Hackathon Kanban"
+        description="Operational view of hackathons grouped by lifecycle. Rows come from Supabase `public.hackathons`; submissions and scores live in `public.submissions` and `public.judge_scores`."
       />
     </div>
   );

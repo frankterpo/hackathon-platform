@@ -1,16 +1,19 @@
 #!/usr/bin/env bash
 # Pull Vercel env vars into namespaced files: .env.vercel.<project_slug>
-# Prerequisites: Vercel CLI (see package.json / docs/VERCEL_ENV_SYNC.md) and `vercel login`.
+# Non-interactive: uses global --non-interactive (avoid legacy/subcommand --yes quirks).
+# Resolves CLI as: global `vercel` if on PATH, else `npx vercel@latest`.
+# Prerequisites: `vercel login` or `npx vercel@latest login`.
 
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 
-if ! command -v vercel >/dev/null 2>&1; then
-  echo "Vercel CLI not found. Install it globally, or use: npx vercel@latest <command>"
-  echo "Example: npm i -g vercel   # https://vercel.com/docs/cli"
-  exit 1
+if command -v vercel >/dev/null 2>&1; then
+  VERCEL=(vercel)
+else
+  echo "No global \`vercel\` on PATH — using npx vercel@latest"
+  VERCEL=(npx vercel@latest)
 fi
 
 PROJECTS=(
@@ -28,8 +31,8 @@ echo ""
 for slug in "${PROJECTS[@]}"; do
   out="$ROOT/.env.vercel.$slug"
   echo "→ Link + env pull for project: $slug → $(basename "$out")"
-  vercel link --yes --project "$slug"
-  vercel env pull "$out" --environment="$ENVIRONMENT" --yes
+  "${VERCEL[@]}" --non-interactive link --project "$slug"
+  "${VERCEL[@]}" env pull "$out" --environment="$ENVIRONMENT" --non-interactive
   echo ""
 done
 
