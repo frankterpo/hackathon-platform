@@ -13,12 +13,14 @@ else
   VERCEL=(npx vercel@latest)
 fi
 
+# Same slugs as scripts/sync-vercel-envs.sh — add slugs when you have Vercel projects to audit.
 PROJECTS=(
-  "cursor-hackathon-london-2026-1"
-  "cursor-hackathon-london-2026-0"
-  "cursor-hack-london-2026-1"
-  "cursor-thrads-london-2026"
 )
+
+if [[ ${#PROJECTS[@]} -eq 0 ]]; then
+  echo "No slugs in PROJECTS — add Vercel project names to scripts/vercel-env-ls-all.sh (same list as sync-vercel-envs.sh)."
+  exit 0
+fi
 
 for slug in "${PROJECTS[@]}"; do
   echo "═══════════════════════════════════════"
