@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { CopySqlButtons } from "@/components/CopySqlButtons";
 import {
   firebaseConsoleUrl,
@@ -10,7 +12,11 @@ import {
   vercelLiveDeploymentUrl,
   vercelTeamProjectUrl,
 } from "@/lib/links";
-import type { HackathonRow } from "@/types/database";
+import {
+  type HackathonRow,
+  hackathonFirebaseProjectId,
+  hackathonLumaEventId,
+} from "@/types/database";
 
 type Props = {
   hack: HackathonRow;
@@ -67,10 +73,12 @@ export function HackathonCard({ hack, supabaseProjectRef }: Props) {
   const vercelFallback = vercelDashboardFallbackUrl();
   const vercelProjectHref = teamProjectUrl ?? vercelFallback;
 
-  const lumaEventHref = lumaEventUrl(hack.luma_url ?? hack.luma_event_id);
-  const lumaHostHref = lumaHostDashboardUrl(hack.luma_event_id);
+  const lumaSlug = hackathonLumaEventId(hack);
+  const firebaseProject = hackathonFirebaseProjectId(hack);
+  const lumaEventHref = lumaEventUrl(hack.luma_url ?? lumaSlug);
+  const lumaHostHref = lumaHostDashboardUrl(lumaSlug);
 
-  const firebaseHref = firebaseConsoleUrl(hack.firebase_config_ref);
+  const firebaseHref = firebaseConsoleUrl(firebaseProject);
 
   const supabaseHome = supabaseProjectHomeUrl(supabaseProjectRef);
   const supabaseTables = supabaseDatabaseTablesUrl(supabaseProjectRef);
@@ -92,6 +100,15 @@ export function HackathonCard({ hack, supabaseProjectRef }: Props) {
           Links
         </span>
         <div className="flex flex-wrap gap-1.5">
+          <Link
+            href={`/admin/hackathons/${hack.id}/tasks`}
+            className={linkClass}
+            title="Operational checklist (venue, catering, comms, …)"
+            onPointerDown={(e) => e.stopPropagation()}
+            onMouseDown={(e) => e.stopPropagation()}
+          >
+            Admin · tasks
+          </Link>
           <BoardLink
             href={liveUrl ?? "#"}
             label="Vercel · live"
@@ -119,7 +136,7 @@ export function HackathonCard({ hack, supabaseProjectRef }: Props) {
             href={lumaHostHref}
             label="Luma · host"
             title={
-              hack.luma_event_id
+              lumaSlug
                 ? "Host dashboard for this event (requires your Luma session)"
                 : "Hosted events dashboard (requires your Luma session)"
             }
@@ -128,7 +145,7 @@ export function HackathonCard({ hack, supabaseProjectRef }: Props) {
             href={firebaseHref}
             label="Firebase"
             title={
-              hack.firebase_config_ref
+              firebaseProject
                 ? "Firebase console for this project"
                 : "Set firebase_config_ref to the Firebase project ID (not display name)"
             }

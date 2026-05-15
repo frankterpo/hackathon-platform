@@ -4,12 +4,9 @@ This repo tracks **multiple Vercel projects** for separate hackathon deployments
 
 ## Projects (slugs)
 
-| Slug                             |
-| -------------------------------- |
-| `cursor-hackathon-london-2026-1` |
-| `cursor-hackathon-london-2026-0` |
-| `cursor-hack-london-2026-1`      |
-| `cursor-thrads-london-2026`      |
+There is **no default slug list** in git: add Vercel project names to the `PROJECTS` array in `scripts/sync-vercel-envs.sh` (and the same list in `scripts/vercel-env-ls-all.sh`) when you create deployments for this app.
+
+Older London-event slugs (`cursor-hackathon-london-2026-*`, `cursor-hack-london-2026-*`, `cusor-hack-london-2026-1`, etc.) were retired from this repo after those projects were removed or found not to host this App Router surface.
 
 ## CLI installation
 
