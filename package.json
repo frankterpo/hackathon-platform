@@ -2,13 +2,17 @@
   "name": "hackathon-platform",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=20.9.0"
+  },
   "scripts": {
     "dev": "next dev",
+    "dev:3499": "next dev -p 3499",
     "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint",
     "check": "npm run lint && npm run build && npm test",
-    "test": "node scripts/smoke-check.mjs",
+    "test": "node scripts/smoke-check.mjs && node --test tests/*.test.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "stack": "bash scripts/platform-stack.sh",
@@ -23,13 +27,20 @@
     "gcp:list": "bash scripts/gcp-list-projects.sh",
     "supabase:push": "bash scripts/supabase-push.sh",
     "supabase:apply": "bash scripts/supabase-apply-linked.sh",
-    "supabase:pull": "supabase db pull"
+    "supabase:pull": "supabase db pull",
+    "csv:recover": "node scripts/import-hackathon-csv-recovery.mjs",
+    "csv:backfill-submissions": "node scripts/backfill-submissions-from-csv.mjs",
+    "csv:backfill-body": "node scripts/backfill-submissions-from-body.mjs",
+    "submissions:enrich": "node scripts/enrich-submissions-from-apis.mjs"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
+    "@supabase/ssr": "^0.10.3",
     "@supabase/supabase-js": "^2.49.8",
+    "browser-use-sdk": "^3.5.0",
+    "firebase-admin": "^13.9.0",
     "next": "16.2.6",
     "react": "19.2.4",
     "react-dom": "19.2.4"
@@ -43,6 +54,7 @@
     "eslint-config-next": "16.2.6",
     "prettier": "^3.5.3",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "ws": "^8.20.1"
   }
 }
