@@ -86,9 +86,11 @@ Use the project ref from the Supabase dashboard URL as `NEXT_PUBLIC_SUPABASE_PRO
 ```bash
 # https://supabase.com/docs/guides/cli
 supabase login
-supabase link --project-ref YOUR_PROJECT_REF
+supabase link --project-ref YOUR_PROJECT_REF   # same ref as in `https://YOUR_PROJECT_REF.supabase.co`
 npm run supabase:push   # supabase db push --linked; requires link above
 ```
+
+**Lookup integration migration:** `supabase/migrations/20260516183000_integration_lookup_tables.sql` adds `public.luma_events`, `public.firebase_projects`, and FK columns on `hackathons`. PostgREST embeds depend on those FKs; without them you may see **Could not find a relationship between 'hackathons' and 'luma_events'**. The board loaders fall back to non-embed selects when that error appears, but hosted environments should still run **`npm run supabase:push`** so cron and admin paths match the repo schema.
 
 After the first migration, load demo rows using one of:
 
@@ -126,7 +128,7 @@ After reconciliation, keep migrations as the source of truth (`hackathons`, `sub
 
 ## Vercel env sync
 
-See [docs/VERCEL_ENV_SYNC.md](docs/VERCEL_ENV_SYNC.md) for the full list of project slugs and `vercel env pull` workflow.
+See [docs/VERCEL_ENV_SYNC.md](docs/VERCEL_ENV_SYNC.md) for the `vercel env pull` workflow; register each deployment’s slug in `scripts/sync-vercel-envs.sh` when you add Vercel projects.
 
 ## GCP
 

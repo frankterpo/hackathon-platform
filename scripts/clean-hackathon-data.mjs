@@ -33,26 +33,27 @@ const fakeThemeSlugs = [
   "sf-product-sprint-2026",
 ];
 
+/** Clear Vercel slugs for rows that pointed at removed or unrelated projects. */
 const backfills = [
   {
     match: { luma_url: "https://luma.com/2ohizf10" },
-    values: { vercel_project_slug: "cursor-hackathon-london-2026-0" },
+    values: { vercel_project_slug: null },
   },
   {
     match: { luma_url: "https://luma.com/1ufgfhvv" },
-    values: { vercel_project_slug: "cursor-hack-london-2026-1" },
+    values: { vercel_project_slug: null },
   },
   {
     match: { luma_url: "https://luma.com/b6jccpfu" },
-    values: { vercel_project_slug: "cursor-hackathon-london-2026-1" },
+    values: { vercel_project_slug: null },
   },
   {
     match: { theme_slug: "london-2026" },
-    values: { vercel_project_slug: "cursor-hackathon-london-2026-0" },
+    values: { vercel_project_slug: null },
   },
   {
     match: { theme_slug: "cursor-thrads-london-2026" },
-    values: { vercel_project_slug: "cursor-thrads-london-2026" },
+    values: { vercel_project_slug: null },
   },
 ];
 

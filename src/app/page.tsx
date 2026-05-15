@@ -7,6 +7,7 @@ import { loadHackathonsForBoard } from "@/lib/supabase/server";
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
+  // Full `hackathons` rows — no `hideHackathonFromMasterOverview` / no Firebase gate (see master page).
   const {
     hackathons,
     queryError,
@@ -20,10 +21,10 @@ export default async function Home() {
     <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col px-4 py-10 sm:px-6 lg:px-8">
       <div className="mb-6 flex justify-end">
         <Link
-          href="/admin/master-panel"
+          href="/app/master"
           className="rounded-lg border border-white/10 px-3 py-1.5 text-xs font-medium uppercase tracking-wider text-zinc-400 transition hover:border-white/20 hover:text-zinc-200"
         >
-          Master panel
+          Master app
         </Link>
       </div>
       <HackathonBoard

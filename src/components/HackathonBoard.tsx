@@ -9,7 +9,7 @@ type Props = {
   envDiagnostics?: SupabaseEnvDiagnostics;
   queryError?: string | null;
   usedDevMock?: boolean;
-  /** Drag-and-drop + status writes (use on `/admin/master-panel`; needs SUPABASE_SERVICE_ROLE_KEY). */
+  /** Drag-and-drop + status writes (e.g. a dedicated internal page; needs SUPABASE_SERVICE_ROLE_KEY). */
   enableKanbanDrag?: boolean;
   /** Override default hero copy (e.g. admin vs public home). */
   eyebrow?: string;
@@ -145,11 +145,11 @@ export function HackathonBoard({
             , paste <code className="font-mono text-xs">supabase/seed.sql</code>{" "}
             in the SQL editor, or use{" "}
             <span className="font-medium text-zinc-200">Create hackathon</span>{" "}
-            on{" "}
+            at{" "}
             <code className="rounded bg-black/40 px-1 font-mono text-xs">
-              /admin/master-panel
+              /app/master
             </code>{" "}
-            with{" "}
+            (sign in) with{" "}
             <code className="rounded bg-black/40 px-1 font-mono text-xs">
               ADMIN_SECRET
             </code>
