@@ -22,13 +22,12 @@ import {
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
-/** Same order as scripts/sync-vercel-envs.sh — last entry wins conflicts. */
-const VERCEL_ENV_BASE = [
-  ".env.vercel.cursor-hackathon-london-2026-1",
-  ".env.vercel.cursor-hackathon-london-2026-0",
-  ".env.vercel.cursor-hack-london-2026-1",
-  ".env.vercel.cursor-thrads-london-2026",
-];
+/**
+ * Preferred merge order for known pulls (last wins). Empty: only `.env.vercel.*` files
+ * discovered on disk are used — add filenames here when you introduce fixed-order pulls
+ * (see scripts/sync-vercel-envs.sh).
+ */
+const VERCEL_ENV_BASE = [];
 
 const discovered = fs
   .readdirSync(ROOT)

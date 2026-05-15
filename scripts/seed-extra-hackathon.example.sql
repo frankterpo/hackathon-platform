@@ -1,0 +1,22 @@
+-- Example: insert a hackathon row when one is missing from `public.hackathons`.
+-- Adjust name, timestamps, theme_slug (unique), and optional luma_event_id before applying.
+--
+-- Required columns are satisfied by triggers + defaults on insert; minimal example:
+
+-- insert into public.hackathons (
+--   name,
+--   status,
+--   start_date,
+--   end_date,
+--   theme_slug,
+--   luma_event_id,
+--   luma_url
+-- ) values (
+--   'Cursor Hands-Off London Hackathon',
+--   'scheduled',
+--   timestamptz '2026-06-15 17:00:00+00',
+--   timestamptz '2026-06-15 21:00:00+00',
+--   'cursor-hands-off-london-2026',
+--   null,
+--   null
+-- );

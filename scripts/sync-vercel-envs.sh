@@ -16,17 +16,20 @@ else
   VERCEL=(npx vercel@latest)
 fi
 
+# Add one entry per Vercel project slug when you deploy this app (see docs/VERCEL_ENV_SYNC.md).
+# Retired 2026-05: old London / typo projects were removed from Vercel and from this list.
 PROJECTS=(
-  "cursor-hackathon-london-2026-1"
-  "cursor-hackathon-london-2026-0"
-  "cursor-hack-london-2026-1"
-  "cursor-thrads-london-2026"
 )
 
 ENVIRONMENT="${VERCEL_ENV:-production}"
 
 echo "Using Vercel environment: ${ENVIRONMENT} (override with VERCEL_ENV=development|preview|production)"
 echo ""
+
+if [[ ${#PROJECTS[@]} -eq 0 ]]; then
+  echo "No slugs in PROJECTS — add Vercel project names to scripts/sync-vercel-envs.sh to pull envs."
+  echo ""
+fi
 
 for slug in "${PROJECTS[@]}"; do
   out="$ROOT/.env.vercel.$slug"
