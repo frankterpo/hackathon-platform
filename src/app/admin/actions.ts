@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 import type { HackathonStatus } from "@/types/database";
 import {
@@ -27,6 +28,72 @@ function emptyToNull(raw: FormDataEntryValue | null): string | null {
   }
   const t = raw.trim();
   return t.length > 0 ? t : null;
+}
+
+async function ensureLumaEventRowId(
+  supabase: SupabaseClient,
+  lumaEventId: string | null,
+): Promise<string | null> {
+  if (!lumaEventId) return null;
+  const trimmed = lumaEventId.trim();
+  if (!trimmed) return null;
+  const { data: existing } = await supabase
+    .from("luma_events")
+    .select("id")
+    .eq("luma_event_id", trimmed)
+    .maybeSingle();
+  if (existing) return (existing as { id: string }).id;
+  const { data: inserted, error } = await supabase
+    .from("luma_events")
+    .insert({ luma_event_id: trimmed, display_name: null })
+    .select("id")
+    .single();
+  if (error?.code === "23505") {
+    const { data: again } = await supabase
+      .from("luma_events")
+      .select("id")
+      .eq("luma_event_id", trimmed)
+      .maybeSingle();
+    return (again as { id: string } | null)?.id ?? null;
+  }
+  if (error) {
+    console.error("[ensureLumaEventRowId]", error.message, error);
+    return null;
+  }
+  return (inserted as { id: string } | null)?.id ?? null;
+}
+
+async function ensureFirebaseProjectRowId(
+  supabase: SupabaseClient,
+  firebaseProjectId: string | null,
+): Promise<string | null> {
+  if (!firebaseProjectId) return null;
+  const trimmed = firebaseProjectId.trim();
+  if (!trimmed) return null;
+  const { data: existing } = await supabase
+    .from("firebase_projects")
+    .select("id")
+    .eq("firebase_project_id", trimmed)
+    .maybeSingle();
+  if (existing) return (existing as { id: string }).id;
+  const { data: inserted, error } = await supabase
+    .from("firebase_projects")
+    .insert({ firebase_project_id: trimmed, display_name: null })
+    .select("id")
+    .single();
+  if (error?.code === "23505") {
+    const { data: again } = await supabase
+      .from("firebase_projects")
+      .select("id")
+      .eq("firebase_project_id", trimmed)
+      .maybeSingle();
+    return (again as { id: string } | null)?.id ?? null;
+  }
+  if (error) {
+    console.error("[ensureFirebaseProjectRowId]", error.message, error);
+    return null;
+  }
+  return (inserted as { id: string } | null)?.id ?? null;
 }
 
 function toSlug(value: string): string {
@@ -91,14 +158,34 @@ export async function createHackathonAction(
   const themeSlug = emptyToNull(formData.get("themeSlug")) ?? toSlug(name);
   const startDate = emptyToNull(formData.get("startDate"));
   const endDate = emptyToNull(formData.get("endDate"));
+  const lumaEv = emptyToNull(formData.get("lumaEventId"));
+  const fbRef = emptyToNull(formData.get("firebaseProjectId"));
+  const luma_event_uuid = await ensureLumaEventRowId(supabase, lumaEv);
+  const firebase_project_uuid = await ensureFirebaseProjectRowId(supabase, fbRef);
+  if (lumaEv && !luma_event_uuid) {
+    return {
+      error:
+        "Could not create or resolve public.luma_events row for this Luma event id. Check logs and migrations.",
+      ok: false,
+    };
+  }
+  if (fbRef && !firebase_project_uuid) {
+    return {
+      error:
+        "Could not create or resolve public.firebase_projects row for this Firebase project id. Check logs and migrations.",
+      ok: false,
+    };
+  }
   const payload = {
     name,
     status: parseStatus(formData.get("status")),
     theme_slug: themeSlug,
     slug: themeSlug,
     vercel_project_slug: emptyToNull(formData.get("vercelSlug")),
-    luma_event_id: emptyToNull(formData.get("lumaEventId")),
-    firebase_config_ref: emptyToNull(formData.get("firebaseProjectId")),
+    luma_event_id: lumaEv,
+    firebase_config_ref: fbRef,
+    luma_event_uuid,
+    firebase_project_uuid,
     start_date: startDate,
     end_date: endDate,
     starts_at: startDate ?? new Date().toISOString(),
@@ -116,7 +203,7 @@ export async function createHackathonAction(
   }
 
   revalidatePath("/");
-  revalidatePath("/admin/master-panel");
+  revalidatePath("/app/master");
   return { error: null, ok: true };
 }
 
@@ -153,6 +240,6 @@ export async function updateHackathonStatusAction(
   }
 
   revalidatePath("/");
-  revalidatePath("/admin/master-panel");
+  revalidatePath("/app/master");
   return { error: null, ok: true };
 }
